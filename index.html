@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>OPERATOR — Daily Operating System</title>
+<title>OBSIDIAN — Daily Operating System</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -65,7 +65,7 @@ body{
 .ring .track{stroke:var(--c3);fill:none}
 .ring .prog{stroke:var(--c11);fill:none;stroke-linecap:round;transition:stroke-dashoffset .6s ease}
 .ring .ctr{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
-.ring .ctr b{font-family:var(--display);font-size:15px;font-weight:600;display:block}
+.ring .ctr b{font-family:var(--display);font-size:18px;font-weight:600;display:block;line-height:1}
 .ring .ctr span{font-size:9px;letter-spacing:.12em;color:var(--c6);text-transform:uppercase}
 /* tabs */
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
@@ -408,7 +408,7 @@ body.lite .status-dot{animation:none}
 <div class="vignette"></div>
 <header class="topnav">
   <div class="topnav-inner">
-    <div class="wordmark"><span class="logo-dot"></span>Operator<span class="wm-sub">/ OS</span></div>
+    <div class="wordmark"><span class="logo-dot"></span>Obsidian<span class="wm-sub">/ OS</span></div>
     <nav class="nav-meta">
       <span class="nav-link">System</span><span class="nav-sep"></span>
       <span class="nav-link">Focus</span><span class="nav-sep"></span>
@@ -419,7 +419,7 @@ body.lite .status-dot{animation:none}
 </header>
 <div class="grain"></div>
 <div class="app">
-  <div class="brand"><h1>Operator</h1><span class="sub">Daily Operating System</span></div>
+  <div class="brand"><h1>Obsidian</h1><span class="sub">Daily Operating System</span></div>
 
   <div class="glass headcard">
     <div class="datenav">
@@ -501,7 +501,7 @@ function applyRemote(node){if(!node||!node.json)return false;var r;try{r=JSON.pa
 function cloudConnect(silent){var cfg=getCfg(),id=getSyncId();if(!cfg||!id){setCloudState('off','Not connected');return;}if(!window.firebase||!firebase.initializeApp){setCloudState('error','Library blocked');if(!silent)toast('Firebase library did not load \u2014 check your connection');return;}try{if(!fbApp)fbApp=firebase.initializeApp(cfg);}catch(e){}try{fbRef=firebase.database().ref('operators/'+id);}catch(e){setCloudState('error','Bad config');if(!silent)toast('Could not connect \u2014 check databaseURL');return;}setCloudState('connecting','Connecting\u2026');fbRef.once('value').then(function(snap){var node=snap.val();if(node&&node.json)applyRemote(node);doPush();fbRef.on('value',function(s){var n=s.val();if(!n||n.device===deviceId())return;if(applyRemote(n))render();});setCloudState('connected','Synced');if(!silent)toast('Cloud sync on \u2705');render();}).catch(function(e){setCloudState('error','Error');if(!silent)toast('Sync error: '+((e&&e.message)||e));});}
 function cloudDisconnect(){try{if(fbRef)fbRef.off();}catch(e){}fbRef=null;localStorage.removeItem(FB_CFG_KEY);localStorage.removeItem(SYNC_ID_KEY);setCloudState('off','Disconnected');toast('Cloud sync off');}
 function cloudSetup(cfgText,id){var cfg=parseCfg(cfgText);if(!cfg){toast('Could not read config \u2014 paste the whole { \u2026 } block');return;}if(!cfg.databaseURL){toast('Missing databaseURL \u2014 create a Realtime Database first');return;}if(!cfg.apiKey){toast('Missing apiKey in config');return;}if(!id||!id.trim()){toast('Enter a Sync ID first');return;}localStorage.setItem(FB_CFG_KEY,JSON.stringify(cfg));localStorage.setItem(SYNC_ID_KEY,id.trim());if(fbApp){toast('Reloading to apply\u2026');setTimeout(function(){location.reload();},700);return;}cloudConnect(false);}
-function cloudCardHTML(){var cfg=getCfg(),id=getSyncId(),connected=!!cfg&&!!id;return '<div class="glass card" style="margin-bottom:18px"><h2>\u{1F501} Auto-Sync \u00b7 Firebase <span id="cloudStatus" class="bc-state">'+(connected?'<span class=\'bc-dot\' style=\'background:#2DE0A6;box-shadow:0 0 10px #2DE0A6\'></span>Connected':'<span class=\'bc-dot\' style=\'background:#8A8A8A\'></span>Not connected')+'</span></h2><div class="sub" style="text-transform:none;letter-spacing:0;line-height:1.6;color:var(--c6);margin-bottom:14px">Link both devices to one free Firebase project and they sync automatically in real time. ~3 min one-time setup \u2014 steps below.</div><label class="sub" style="display:block;margin-bottom:6px">Firebase config</label><textarea id="fbCfg" placeholder=\'Paste the firebaseConfig { \u2026 } here\' style="min-height:118px;font-family:monospace;font-size:12px">'+(cfg?esc(JSON.stringify(cfg,null,2)):'')+'</textarea><label class="sub" style="display:block;margin:12px 0 6px">Sync ID \u2014 same word on every device</label><input id="fbId" placeholder="e.g. hiru-operator-2026" value="'+esc(id)+'" style="width:100%"><div class="row" style="flex-wrap:wrap;gap:10px;margin-top:14px"><button class="btn solid" id="cloudConnectBtn">'+(connected?'Reconnect':'Connect &amp; Sync')+'</button>'+(connected?'<button class="btn ghost" id="cloudOffBtn">Disconnect</button>':'')+'</div><details style="margin-top:16px"><summary class="sub" style="cursor:pointer">\u2699\uFE0F How to set up Firebase (one time)</summary><ol class="sub" style="text-transform:none;letter-spacing:0;line-height:1.85;color:var(--c7);margin:10px 0 0;padding-left:20px"><li>Open <b>console.firebase.google.com</b> \u2192 <b>Add project</b> (any name, skip Analytics).</li><li>Left menu: <b>Build \u2192 Realtime Database \u2192 Create Database</b> \u2192 choose a location \u2192 start in <b>Test mode</b>.</li><li>Click the gear \u2192 <b>Project settings</b> \u2192 under <b>Your apps</b> click the <b>&lt;/&gt;</b> (Web) icon \u2192 register the app.</li><li>Copy the whole <b>firebaseConfig</b> object and paste it above (must include <b>databaseURL</b>).</li><li>Choose any <b>Sync ID</b>, enter the same one on laptop + phone, then tap <b>Connect &amp; Sync</b> on both.</li></ol><div class="sub" style="text-transform:none;letter-spacing:0;color:var(--c5);margin-top:8px">Test mode stays open ~30 days; tighten Realtime Database rules later for long-term use.</div></details></div>';}
+function cloudCardHTML(){var cfg=getCfg(),id=getSyncId(),connected=!!cfg&&!!id;return '<div class="glass card" style="margin-bottom:18px"><h2>\u{1F501} Auto-Sync \u00b7 Firebase <span id="cloudStatus" class="bc-state">'+(connected?'<span class=\'bc-dot\' style=\'background:#2DE0A6;box-shadow:0 0 10px #2DE0A6\'></span>Connected':'<span class=\'bc-dot\' style=\'background:#8A8A8A\'></span>Not connected')+'</span></h2><div class="sub" style="text-transform:none;letter-spacing:0;line-height:1.6;color:var(--c6);margin-bottom:14px">Link both devices to one free Firebase project and they sync automatically in real time. ~3 min one-time setup \u2014 steps below.</div><label class="sub" style="display:block;margin-bottom:6px">Firebase config</label><textarea id="fbCfg" placeholder=\'Paste the firebaseConfig { \u2026 } here\' style="min-height:118px;font-family:monospace;font-size:12px">'+(cfg?esc(JSON.stringify(cfg,null,2)):'')+'</textarea><label class="sub" style="display:block;margin:12px 0 6px">Sync ID \u2014 same word on every device</label><input id="fbId" placeholder="e.g. hiru-obsidian-2026" value="'+esc(id)+'" style="width:100%"><div class="row" style="flex-wrap:wrap;gap:10px;margin-top:14px"><button class="btn solid" id="cloudConnectBtn">'+(connected?'Reconnect':'Connect &amp; Sync')+'</button>'+(connected?'<button class="btn ghost" id="cloudOffBtn">Disconnect</button>':'')+'</div><details style="margin-top:16px"><summary class="sub" style="cursor:pointer">\u2699\uFE0F How to set up Firebase (one time)</summary><ol class="sub" style="text-transform:none;letter-spacing:0;line-height:1.85;color:var(--c7);margin:10px 0 0;padding-left:20px"><li>Open <b>console.firebase.google.com</b> \u2192 <b>Add project</b> (any name, skip Analytics).</li><li>Left menu: <b>Build \u2192 Realtime Database \u2192 Create Database</b> \u2192 choose a location \u2192 start in <b>Test mode</b>.</li><li>Click the gear \u2192 <b>Project settings</b> \u2192 under <b>Your apps</b> click the <b>&lt;/&gt;</b> (Web) icon \u2192 register the app.</li><li>Copy the whole <b>firebaseConfig</b> object and paste it above (must include <b>databaseURL</b>).</li><li>Choose any <b>Sync ID</b>, enter the same one on laptop + phone, then tap <b>Connect &amp; Sync</b> on both.</li></ol><div class="sub" style="text-transform:none;letter-spacing:0;color:var(--c5);margin-top:8px">Test mode stays open ~30 days; tighten Realtime Database rules later for long-term use.</div></details></div>';}
 function todayStr(){const d=new Date();return fmt(d)}
 function fmt(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function parseD(s){const[y,m,da]=s.split('-').map(Number);return new Date(y,m-1,da)}
@@ -533,7 +533,7 @@ function ring(el,pct,centerTop,centerBot){
   var size=el.clientWidth||el.offsetWidth||74;if(size<40)size=74;
   var sw=Math.max(5,Math.round(size*0.092));
   var cx=size/2,R=(size-sw)/2-1,C=2*Math.PI*R,off=C*(1-Math.max(0,Math.min(100,pct))/100);
-  el.innerHTML='<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'"><defs><linearGradient id="ringGrad" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#29E68C"/><stop offset="0.35" stop-color="#1FD9C0"/><stop offset="0.65" stop-color="#2F7BF6"/><stop offset="1" stop-color="#7B3FF2"/></linearGradient></defs><circle class="track" cx="'+cx+'" cy="'+cx+'" r="'+R+'" stroke-width="'+sw+'" fill="none"/><circle class="prog" cx="'+cx+'" cy="'+cx+'" r="'+R+'" stroke-width="'+sw+'" stroke-linecap="round" fill="none" stroke-dasharray="'+C+'" stroke-dashoffset="'+off+'"/></svg><div class="ctr"><b>'+centerTop+'</b><span>'+(centerBot||'')+'</span></div>';
+  el.innerHTML='<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'"><defs><linearGradient id="ringGrad" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#29E68C"/><stop offset="0.35" stop-color="#1FD9C0"/><stop offset="0.65" stop-color="#2F7BF6"/><stop offset="1" stop-color="#7B3FF2"/></linearGradient></defs><circle class="track" cx="'+cx+'" cy="'+cx+'" r="'+R+'" stroke-width="'+sw+'" fill="none"/><circle class="prog" cx="'+cx+'" cy="'+cx+'" r="'+R+'" stroke-width="'+sw+'" stroke-linecap="round" fill="none" stroke-dasharray="'+C+'" stroke-dashoffset="'+off+'"/></svg><div class="ctr"><b>'+centerTop+'</b>'+(centerBot?'<span>'+centerBot+'</span>':'')+'</div>';
 }
 
 //============ HEADER ============
@@ -542,11 +542,11 @@ function renderHeader(){
   document.getElementById('dateLabel').textContent=d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   document.getElementById('dayLabel').textContent=d.toLocaleDateString('en-US',{weekday:'long'})+(sel===todayStr()?' \u00b7 Today':'');
   const ws=workedSec(sel),wp=Math.min(100,ws/WORK_GOAL*100);
-  ring(document.getElementById('workRing'),wp,Math.round(wp)+'%','of 12h');
+  ring(document.getElementById('workRing'),wp,Math.round(wp)+'%','');
   document.getElementById('workVal').textContent=hms(ws);
   document.getElementById('workRem').textContent=ws>=WORK_GOAL?'Goal reached \u2714':(hms(Math.max(0,WORK_GOAL-ws))+' left');
   const dc=dayCompletion(sel);
-  ring(document.getElementById('dayRing'),dc,dc+'%','done');
+  ring(document.getElementById('dayRing'),dc,dc+'%','');
   document.getElementById('dayVal').textContent=dc+'%';
 }
 
@@ -606,7 +606,7 @@ function viewSync(){
     +'<div class="grid cols2">'
     +'<div class="glass card"><h2>\u2601\uFE0F Backup &amp; Restore</h2><div class="sub" style="margin-bottom:14px">'+st.days+' day'+(st.days===1?'':'s')+' stored \u00b7 '+st.kb+' KB</div>'
     +'<div class="row" style="flex-wrap:wrap;gap:10px"><button class="btn solid" id="exportBtn">\u2193 Export backup</button><button class="btn" id="importBtn">\u2191 Import file</button><button class="btn ghost" id="mergeMode">Mode: Merge</button><input type="file" id="importFile" accept="application/json,.json" style="display:none"></div>'
-    +'<div class="sub" style="margin-top:14px;text-transform:none;letter-spacing:0;line-height:1.7;color:var(--c6)">Export saves all your days to a file. On your other device, open this same OPERATOR page and tap Import to load it. Merge keeps both devices\u2019 days; Replace overwrites everything with the file.</div></div>'
+    +'<div class="sub" style="margin-top:14px;text-transform:none;letter-spacing:0;line-height:1.7;color:var(--c6)">Export saves all your days to a file. On your other device, open this same OBSIDIAN page and tap Import to load it. Merge keeps both devices\u2019 days; Replace overwrites everything with the file.</div></div>'
     +'<div class="glass card"><h2>\u{1F501} Sync Code</h2><div class="sub" style="margin-bottom:8px;text-transform:none;letter-spacing:0;color:var(--c6)">Copy on one device, paste &amp; apply on the other</div>'
     +'<textarea id="syncOut" readonly style="min-height:88px;font-family:monospace;font-size:12px">'+esc(json)+'</textarea>'
     +'<div class="row" style="margin:10px 0"><button class="btn solid" id="copyCode">Copy code</button></div>'
@@ -614,7 +614,7 @@ function viewSync(){
     +'<div class="row" style="margin-top:10px"><button class="btn" id="applyCode">Apply code</button></div></div></div>'
     +'<div class="glass card" style="margin-top:18px"><h2>How sync works</h2><div class="sub" style="text-transform:none;letter-spacing:0;line-height:1.8;color:var(--c7)">Your data is saved in each browser\u2019s local storage, so it does not move between devices on its own. To keep your phone and laptop in sync, export (or copy the code) on the device you just used, then import (or paste) on the other \u2014 ideally once at the end of each session. Clearing browser data erases local entries, so keep an exported backup.</div></div>';
 }
-function exportData(){try{var blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='operator-backup-'+todayStr()+'.json';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},120);toast('Backup exported');}catch(e){toast('Export failed');}}
+function exportData(){try{var blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='obsidian-backup-'+todayStr()+'.json';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},120);toast('Backup exported');}catch(e){toast('Export failed');}}
 function applyImport(text){if(!text||!text.trim()){toast('Nothing to import');return;}var obj;try{obj=JSON.parse(text);}catch(e){toast('Invalid sync data');return;}if(!obj||typeof obj!=='object'){toast('Invalid sync data');return;}if(syncMerge){Object.keys(obj).forEach(function(k){DB[k]=obj[k];});}else{if(!window.confirm('Replace ALL local data with the imported data?'))return;DB=obj;}save();render();toast(syncMerge?'Merged':'Replaced');}
 
 //-------- JOURNAL --------
@@ -623,7 +623,7 @@ let syncMerge=true;
 function viewJournal(){const j=day().journal;
   if(readMode)return journalRead(j);
   const list=(key,title)=>{return '<div class="glass card"><h2>'+title+'</h2><div id="jl-'+key+'">'+j[key].map((v,i)=>listRowHTML(key,i,v)).join('')+'</div><button class="addbtn" data-add="'+key+'">+ Add</button></div>';};
-  return '<div class="flexb" style="margin-bottom:18px"><div class="sub">Operator Daily Journal \u00b7 '+parseD(sel).toLocaleDateString('en-US',{month:'short',day:'numeric'})+'</div><button class="btn ghost" id="toggleRead">Read Mode</button></div>'
+  return '<div class="flexb" style="margin-bottom:18px"><div class="sub">Obsidian Daily Journal \u00b7 '+parseD(sel).toLocaleDateString('en-US',{month:'short',day:'numeric'})+'</div><button class="btn ghost" id="toggleRead">Read Mode</button></div>'
   +'<div class="grid cols2">'+list('wins','Wins Today')+list('problems','Problems Identified')+list('priorities',"Tomorrow's Priorities")+list('lessons','Lessons Learned')+'</div>'
   +'<div class="grid cols2" style="margin-top:18px">'
    +'<div class="glass card"><h2>\u{1F525} Daily Quote <button class="btn ghost" id="shuffleQuote" style="padding:7px 14px">\u{1F500} Shuffle</button></h2><textarea id="quoteInput" placeholder="Type a quote that fuels today...">'+esc(j.quote)+'</textarea></div>'
@@ -707,7 +707,7 @@ function bind(){
     document.querySelectorAll('[data-rt]').forEach(el=>{el.onclick=()=>{const k=el.dataset.rt,i=+el.dataset.i;day().routines[k][i]=!day().routines[k][i];save();render();};});
   }
   if(tab==='work'){
-    ring(document.getElementById('wRingBig'),Math.min(100,workedSec(sel)/WORK_GOAL*100),Math.round(Math.min(100,workedSec(sel)/WORK_GOAL*100))+'%','of 12h');
+    ring(document.getElementById('wRingBig'),Math.min(100,workedSec(sel)/WORK_GOAL*100),Math.round(Math.min(100,workedSec(sel)/WORK_GOAL*100))+'%','');
     const d=day();
     const tb=document.getElementById('timerBtn');if(tb)tb.onclick=()=>{const w=d.work;if(w.running){w.worked=(w.worked||0)+(Date.now()-w.lastStart)/1000;w.running=false;w.lastStart=null;}else{w.running=true;w.lastStart=Date.now();}save();render();};
     const at=document.getElementById('addTime');if(at)at.onclick=()=>{d.work.worked=(d.work.worked||0)+1800;save();render();toast('+30m logged');};
@@ -741,7 +741,7 @@ dp.onchange=()=>{if(dp.value){sel=dp.value;render();}};
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 //============ TICK (live timer) ============
-setInterval(()=>{const d=DB[sel];if(d&&d.work&&d.work.running){renderHeader();if(tab==='work'){const c=document.getElementById('wClock');if(c)c.textContent=hms(workedSec(sel));const rb=document.getElementById('wRingBig');if(rb)ring(rb,Math.min(100,workedSec(sel)/WORK_GOAL*100),Math.round(Math.min(100,workedSec(sel)/WORK_GOAL*100))+'%','of 12h');}save();}},1000);
+setInterval(()=>{const d=DB[sel];if(d&&d.work&&d.work.running){renderHeader();if(tab==='work'){const c=document.getElementById('wClock');if(c)c.textContent=hms(workedSec(sel));const rb=document.getElementById('wRingBig');if(rb)ring(rb,Math.min(100,workedSec(sel)/WORK_GOAL*100),Math.round(Math.min(100,workedSec(sel)/WORK_GOAL*100))+'%','');}save();}},1000);
 
 render();
 cloudConnect(true);
